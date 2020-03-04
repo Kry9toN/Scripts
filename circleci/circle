@@ -1,0 +1,63 @@
+#!bin/bash
+IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+echo "Cloning Toolchain, and AnyKernel"
+git clone --quiet -j32 https://github.com/Kry9toN/ak2-KryPtoN -b aosp AnyKernel
+git clone --quiet -j32 https://github.com/najahiiii/aarch64-linux-gnu.git -b linaro8-20190402 gcc
+echo "Done"
+token=$(openssl enc -base64 -d <<< NzE1ODAxNzAwOkFBRW5sWGdsMHA4VjVmOHhIZWZIQzJTTHE4a2lvNlZjUy1jCg==)
+chat_id="-1001348632957"
+GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
+curl -s -X POST https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id -d "disable_web_page_preview=true" -d "parse_mode=html&text=<b>KryPtoN Kernel</b> new build is up"'!'"%0AStarted on <code>CircleCI</code>%0AFor device <b>Vince</b> (Redmi 5 Plus AOSP)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0ACompiler <code>$(${GCC}gcc --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A"
+tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
+START=$(date +"%s")
+export ARCH=arm64
+export KBUILD_BUILD_USER=KryPtoN
+export KBUILD_BUILD_HOST=CircleCI
+# Push kernel to channel
+function push() {
+	ZIP=$(echo KryPtoN*.zip)
+	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" \
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)."
+}
+
+function paste() {
+    curl -F document=build.log "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" 
+}
+# Stiker
+function stiker() {
+	curl -s -F chat_id=$chat_id -F sticker="CAADBQADBgADZMYlHVmIXcRlbUt_Ag" https://api.telegram.org/bot$token/sendSticker
+	}
+# Stiker Error
+function stikerr() {
+	curl -s -F chat_id=$chat_id -F sticker="CAADBQADzwIAAnBaORAiq8ke6PAt0wI" https://api.telegram.org/bot$token/sendSticker
+	}
+# Fin Error
+function finerr() {
+        paste
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+			-d chat_id="$chat_id" \
+			-d "disable_web_page_preview=true" \
+			-d "parse_mode=markdown" \
+			-d text="Build throw an error(s)"
+}
+make -s -C $(pwd) O=out vince-krypton_defconfig
+make -C $(pwd) CROSS_COMPILE=${GCC} O=out -j32 -l32 2>&1| tee build.log
+if ! [ -a $IMAGE ]; then
+	finerr
+	stikerr
+	exit 1
+fi
+cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
+paste
+cd AnyKernel
+zip -r9 KryPtoN-Kernel-${tanggal}.zip *
+END=$(date +"%s")
+DIFF=$(($END - $START))
+push
+stiker
