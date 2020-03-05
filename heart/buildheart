@@ -3,6 +3,7 @@ IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 echo "Clone Anykernel and GCC"
 git clone -j32 https://github.com/Kry9toN/AnyKernel3 -b heart AnyKernel
 git clone -j32 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
+git clone -j32 https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang
 echo "Done"
 token=$(openssl enc -base64 -d <<< NzE1ODAxNzAwOkFBRW5sWGdsMHA4VjVmOHhIZWZIQzJTTHE4a2lvNlZjUy1jCg==)
 chat_id="-1001348632957"
@@ -60,7 +61,7 @@ function finerr() {
 # Compile plox
 function compile() {
 make O=out ARCH=arm64 lineage_heart_defconfig
-PATH="${PWD}/bin:${PWD}/toolchain/bin:${PATH}:/root/clang/bin:${PATH}" \
+PATH="${PWD}/bin:${PWD}/toolchain/bin:${PATH}:${PWD}/clang/clang-r349610/bin:${PATH}" \
 make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
