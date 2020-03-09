@@ -2,8 +2,8 @@
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 echo "Clone Anykernel and GCC"
 git clone -j32 https://github.com/Kry9toN/AnyKernel3 -b heart AnyKernel
-git clone -j32 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
-git clone --depth=1 -b google/clang-9.0.8 https://github.com/aln-project/toolchain gclang
+git clone -j32 --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
+git clone -j32 --depth=1 https://github.com/crDroidMod/android_prebuilts_clang_host_linux-x86_clang-6032204 gclang
 echo "Done"
 token=$(openssl enc -base64 -d <<< NzE1ODAxNzAwOkFBRW5sWGdsMHA4VjVmOHhIZWZIQzJTTHE4a2lvNlZjUy1jCg==)
 chat_id="-1001348632957"
