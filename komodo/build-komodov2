@@ -67,7 +67,7 @@ function fin() {
                         -d chat_id="$CHAT_ID" \
                         -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
-                        -d text="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)."
+                        -d text="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s).%0Download: <a href='https://sourceforge.net/projects/krypton-project/files/Test/${FILE}/download'>${FILE}</a>""
 }
 
 #Main script
@@ -96,26 +96,16 @@ if [ "$choice" == "1" ]; then
     lunch "${ROM}"_"${DEVICE}"-userdebug
 
 	mka bacon -j$(nproc --all) 2>&1 | tee "${CDIR}/out/build-${ROM}.log"
-    if ! [ -a $FILE ]; then
+    if ! [ $ret -ne 0 ]; then
         finerr
         send
-	exit 1
+	fail
     fi
 END=$(date +"%s")
 DIFF=$(($END - $START))
 	send
 	fin
-
-clear
-while true; do
-    read -p "So upload on SF ? " yn
-    case $yn in
-        [Yy]* ) sshpass -p 'passwordssh' scp ${FILE} kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project/Test/; break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
+        sshpass -p 'passwordssh' scp ${FILE} kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project/Test/; break;;
 fi
 
 if [ "$choice" == "2" ]; then
@@ -135,14 +125,14 @@ function sendkernel() {
     lunch "${ROM}"_"${DEVICE}"-userdebug
 
 	make bootimage 2>&1 | tee "${CDIR}/out/build-${ROM}.log"
-    if ! [ -a $KERNEL ]; then
+    if ! [ $ret -ne 0 ]; then
+        functCall
         finerr
         send
-		stikerr
-        exit 1
-	send
-	sendkernel
-	fi
+        fail
+    if
+        send
+        sendkernel
 fi
 
 if [ "$choice" == "3" ]; then
@@ -162,14 +152,14 @@ function sendapp() {
     lunch "${ROM}"_"${DEVICE}"-userdebug
 
 	make "${APPS}" 2>&1 | tee "${CDIR}/out/build-${ROM}.log"
-    if ! [ -a $APP ]; then
+    if ! [ $ret -ne 0  ]; then
+        functCall
         finerr
         send
-		stikerr
-        exit 1
-	send
-	sendapp
-	fi
+        fail
+    fi
+        send
+        sendapp
 fi
 
 if [ "$choice" == "4" ]; then
