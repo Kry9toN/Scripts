@@ -105,7 +105,7 @@ END=$(date +"%s")
 DIFF=$(($END - $START))
 	send
 	fin
-        sshpass -p 'passwordssh' scp ${FILE} kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project/Test/; break;;
+        sshpass -p 'passwordssh' scp ${FILE} kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project/Test/
 fi
 
 if [ "$choice" == "2" ]; then
