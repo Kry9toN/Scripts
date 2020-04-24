@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Format and setup 
+echo "***** Prepare Persistant Disk path:/mnt/build *****  "
+sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb
+sudo mkdir -p /mnt/build
+sudo mount -o discard,defaults /dev/sdb /mnt/build
+sudo chmod a+w /mnt/build
+sudo cp /etc/fstab /etc/fstab.backup
+echo UUID=`sudo blkid -s UUID -o value /dev/sdb` /mnt/build ext4 discard,defaults,nofail 0 2 | sudo tee -a /etc/fstab
+cat /etc/fstab
+
+echo "***** Enviroment setup.. *****"
+sudo apt install git ccache
+sudo git config --global user.name "Kry9toN"
+sudo git config --global user.email "dhimasbagusprayoga@gmail.com"
+sudo /usr/sbin/update-ccache-symlinks
+echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+source ~/.bashrc && echo $PATH
+sleep 1s
+
+echo "***** Clone AkhilNarang ENV script *****"
+git clone https://github.com/akhilnarang/scripts
+echo "***** Entering path:/home/"$(whoami)"/scripts/"
+cd scripts || exit 1
+sudo bash setup/android_build_env.sh
+cd ..
+exit
+
