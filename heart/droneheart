@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+echo "Clone Anykernel and GCC"
+git clone -j32 https://github.com/Kry9toN/AnyKernel3 -b heart AnyKernel
+git clone -j32 --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
+git clone -j32 --depth=1 https://github.com/crDroidMod/android_prebuilts_clang_host_linux-x86_clang-6032204 gclang
+echo "Done"
+chat_id="-1001348632957"
+GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
+tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
+START=$(date +"%s")
+export LD_LIBRARY_PATH="/root/clang/bin/../lib:$PATH"xport ARCH=arm64
+export KBUILD_BUILD_USER=root
+export KBUILD_BUILD_HOST=KryPtoNProject
+# sticker plox
+function sticker() {
+        curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
+                        -d sticker="CAADBQADBgADZMYlHVmIXcRlbUt_Ag" \
+                        -d chat_id=$chat_id
+}
+# Stiker Error
+function stikerr() {
+	curl -s -F chat_id=$chat_id -F sticker="CAADBQADzwIAAnBaORAiq8ke6PAt0wI" https://api.telegram.org/bot$token/sendSticker
+}
+# Send info plox channel
+function sendinfo() {
+        PATH="/root/gclang/bin:${PATH}"
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+                        -d chat_id=$chat_id \
+                        -d "disable_web_page_preview=true" \
+                        -d "parse_mode=html" \
+                        -d text="<b>KryPtoN Kernel 4.14</b> new build is up%0AStarted on <code>SemaphoreCI</code>%0AFor device <b>Heart</b> (Lenovo Z5 Pro GT)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (Android 10.0/Q)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(clang --version | head -n 1 | perl -pe 's/\(https.*?\)//gs' | sed -e 's/  */ /g')</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>SemaphoreCI Status</b> <a href='https://kry9ton.semaphoreci.com/workflows/${SEMAPHORE_WORKFLOW_ID}'>here</a>"
+}
+# Push kernel to channel
+function push() {
+        cd AnyKernel
+	ZIP=$(echo KryPtoN*.zip)
+	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" \
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)."
+}
+# Function upload logs to my own TELEGRAM paste
+function paste() {
+        cat build.log | curl -F document=@build.log "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" 
+}
+# Fin Error
+function finerr() {
+        paste
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+			-d chat_id="$chat_id" \
+			-d "disable_web_page_preview=true" \
+			-d "parse_mode=markdown" \
+			-d text="Job ${SEMAPHORE_JOB_NAME} throw an error(s)"
+}
+# Compile plox
+function compile() {
+make O=out ARCH=arm64 lineage_heart_defconfig
+PATH="${PWD}/bin:${PWD}/toolchain/bin:${PATH}:${PWD}/gclang/bin:${PATH}" \
+make -j$(nproc --all) O=out \
+                      ARCH=arm64 \
+                      CC=clang \
+                      CLANG_TRIPLE=aarch64-linux-gnu- \
+                      CROSS_COMPILE=aarch64-linux-gnu- \
+                      CROSS_COMPILE_ARM32=arm-linux-gnueabi- | tee build.log
+            if ! [ -a $IMAGE ]; then
+                finerr
+		stikerr
+                exit 1
+            fi
+        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
+}
+# Zipping
+function zipping() {
+        cd AnyKernel
+        zip -r9 KryPtoN4.14-Heart-${tanggal}.zip *
+        cd ..
+}
+sendinfo
+compile
+zipping
+END=$(date +"%s")
+DIFF=$(($END - $START))
+paste
+push
+sticker
