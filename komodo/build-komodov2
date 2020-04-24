@@ -11,7 +11,7 @@ ROM="komodo"
 CDIR="$PWD/${ROM}"
 LOG="${CDIR}/out/build-${ROM}.log"
 BOT_API_KEY=$(openssl enc -base64 -d <<< NzE1ODAxNzAwOkFBRW5sWGdsMHA4VjVmOHhIZWZIQzJTTHE4a2lvNlZjUy1jCg==)
-CHAT_ID="-1001443045211"
+CHAT_ID="-1001315972559"
 cd $CDIR
 
 # Loading Upload
@@ -67,7 +67,7 @@ function fin() {
                         -d chat_id="$CHAT_ID" \
                         -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
-                        -d text="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s).%0Download: <a href='https://sourceforge.net/projects/krypton-project/files/Test/${FILE}/download'>${FILE}</a>""
+                        -d text="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)."
 }
 
 #Main script
@@ -92,20 +92,36 @@ if [ "$choice" == "1" ]; then
 	export USE_CCACHE=1
 	export CCACHE_COMPRESS=1
 	export TEMPORARY_DISABLE_PATH_RESTRICTIONS=true
+        export SELINUX_IGNORE_NEVERALLOWS=true
+        # Detec file output metod
+        if ! [ -a $FILEE ]; then
+          rm -rf $FILE
+        fi
+
 	. build/envsetup.sh
     lunch "${ROM}"_"${DEVICE}"-userdebug
 
 	mka bacon -j$(nproc --all) 2>&1 | tee "${CDIR}/out/build-${ROM}.log"
-    if ! [ $ret -ne 0 ]; then
+    if ! [ -a $FILE ]; then
         finerr
         send
-	fail
+	exit 1
     fi
 END=$(date +"%s")
 DIFF=$(($END - $START))
 	send
 	fin
-        sshpass -p 'passwordssh' scp ${FILE} kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project/Test/
+
+clear
+while true; do
+    read -p "So upload on SF ? " yn
+    case $yn in
+        [Yy]* ) sshpass -p '468213790d' scp ${FILE} kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project/Test/; break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+
 fi
 
 if [ "$choice" == "2" ]; then
@@ -125,14 +141,14 @@ function sendkernel() {
     lunch "${ROM}"_"${DEVICE}"-userdebug
 
 	make bootimage 2>&1 | tee "${CDIR}/out/build-${ROM}.log"
-    if ! [ $ret -ne 0 ]; then
-        functCall
+    if ! [ -a $KERNEL ]; then
         finerr
         send
-        fail
-    if
-        send
-        sendkernel
+		stikerr
+        exit 1
+	send
+	sendkernel
+	fi
 fi
 
 if [ "$choice" == "3" ]; then
@@ -152,14 +168,14 @@ function sendapp() {
     lunch "${ROM}"_"${DEVICE}"-userdebug
 
 	make "${APPS}" 2>&1 | tee "${CDIR}/out/build-${ROM}.log"
-    if ! [ $ret -ne 0  ]; then
-        functCall
+    if ! [ -a $APP ]; then
         finerr
         send
-        fail
-    fi
-        send
-        sendapp
+		stikerr
+        exit 1
+	send
+	sendapp
+	fi
 fi
 
 if [ "$choice" == "4" ]; then
