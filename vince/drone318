@@ -18,7 +18,6 @@ export ARCH=arm64
 export KBUILD_BUILD_USER=root
 export KBUILD_BUILD_HOST=KryPtoNProject
 export CROSS_COMPILE
-CROSS_COMPILE+="ccache "
 CROSS_COMPILE+="$PWD/gcc/bin/aarch64-linux-android-"
 # sticker plox
 function sticker() {
