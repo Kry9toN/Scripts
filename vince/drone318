@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+echo "Clone Toolchains"
+git clone -j32 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r34 gcc
+git clone -j32 https://github.com/Kry9toN/AnyKernel3 -b vince AnyKernel
+
+# Install build package
+install-package --update-new ccache bc bash git-core gnupg build-essential \
+	zip curl make automake autogen autoconf autotools-dev libtool shtool python \
+	m4 gcc libtool zlib1g-dev
+
+echo "Done"
+chat_id="-1001348632957"
+GCC="$(pwd)/gcc/bin/aarch64-linux-android-"
+tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
+START=$(date +"%s")
+export ARCH=arm64
+export KBUILD_BUILD_USER=root
+export KBUILD_BUILD_HOST=KryPtoNProject
+export CROSS_COMPILE
+CROSS_COMPILE+="ccache "
+CROSS_COMPILE+="$PWD/gcc/bin/aarch64-linux-android-"
+# sticker plox
+function sticker() {
+        curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
+                        -d sticker="CAADBQADBgADZMYlHVmIXcRlbUt_Ag" \
+                        -d chat_id=$chat_id
+}
+# Stiker Error
+function stikerr() {
+	curl -s -F chat_id=$chat_id -F sticker="CAADBQADzwIAAnBaORAiq8ke6PAt0wI" https://api.telegram.org/bot$token/sendSticker
+	}
+# Send info plox channel
+function sendinfo() {
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+                        -d chat_id=$chat_id \
+                        -d "disable_web_page_preview=true" \
+                        -d "parse_mode=html" \
+                        -d text="<b>KryPtoN Kernel 3.18</b> new build is up%0AStarted on <code>SemaphoreCI</code>%0AFor device <b>Vince</b> (Redmi 5 Plus)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (Android 9.0/Pie)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(${GCC}gcc --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>DroneCI Status</b> <a href='https://cloud.drone.io/Kry9toN/KryPtoN-KERNEL-Project-3.18'>here</a>"
+}
+# Push kernel to channel
+function push() {
+        cd AnyKernel
+	ZIP=$(echo KryPtoN*.zip)
+	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" \
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)."
+}
+# Function upload logs to my own TELEGRAM paste
+function paste() {
+        cat build.log | curl -F document=@build.log "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" 
+}
+# Fin Error
+function finerr() {
+        paste
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+			-d chat_id="$chat_id" \
+			-d "disable_web_page_preview=true" \
+			-d "parse_mode=markdown" \
+			-d text="Job masak throw an error(s)"
+}
+# Compile plox
+function compile() {
+        make O=out vince-krypton_defconfig
+        make O=out -j32 -l32 2>&1| tee build.log
+            if ! [ -a $IMAGE ]; then
+                finerr
+		        stikerr
+                exit 1
+            fi
+        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
+        paste
+}
+# Zipping
+function zipping() {
+        cd AnyKernel
+        zip -r9 KryPtoN-vince-AOSP3.18-${tanggal}.zip *
+        cd ..
+}
+sendinfo
+compile
+zipping
+END=$(date +"%s")
+DIFF=$(($END - $START))
+push
+sticker
