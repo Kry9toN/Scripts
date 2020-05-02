@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-echo "Clone Anykernel and GCC"
-git clone -j32 https://github.com/Kry9toN/AnyKernel3 -b heart AnyKernel
-git clone -j32 --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
-git clone -j32 --depth=1 https://github.com/crDroidMod/android_prebuilts_clang_host_linux-x86_clang-6032204 gclang
-echo "Done"
 chat_id="-1001348632957"
-GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 START=$(date +"%s")
 export LD_LIBRARY_PATH="/root/clang/bin/../lib:$PATH"xport ARCH=arm64
@@ -33,7 +27,7 @@ function sendinfo() {
 }
 # Push kernel to channel
 function push() {
-        cd AnyKernel
+        cd /root/AnyKernel
 	ZIP=$(echo KryPtoN*.zip)
 	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
 			-F chat_id="$chat_id" \
@@ -60,7 +54,7 @@ function finerr() {
 # Compile plox
 function compile() {
 make O=out ARCH=arm64 lineage_heart_defconfig
-PATH="${PWD}/bin:${PWD}/toolchain/bin:${PATH}:${PWD}/gclang/bin:${PATH}" \
+PATH="${PWD}/bin:/root/tools/gcc/bin:${PATH}:/root/tools/gclang/bin:${PATH}" \
 make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
@@ -72,11 +66,12 @@ make -j$(nproc --all) O=out \
 		stikerr
                 exit 1
             fi
-        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
+        cp out/arch/arm64/boot/Image.gz-dtb /root/AnyKernel/zImage
 }
 # Zipping
 function zipping() {
-        cd AnyKernel
+        cd /root/AnyKernel
+        git checkout heart
         zip -r9 KryPtoN4.14-Heart-${tanggal}.zip *
         cd ..
 }
