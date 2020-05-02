@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
-GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 START=$(date +"%s")
-export LD_LIBRARY_PATH="/root/clang/bin/../lib:$PATH"xport ARCH=arm64
+export LD_LIBRARY_PATH="/root/tools/clang/bin/../lib:$PATH"xport ARCH=arm64
 export KBUILD_BUILD_USER=root
 export KBUILD_BUILD_HOST=KryPtoNProject
 # sticker plox
@@ -19,7 +18,7 @@ function stikerr() {
 	}
 # Send info plox channel
 function sendinfo() {
-        PATH="/root/clang/bin:${PATH}"
+        PATH="/root/tools/clang/bin:${PATH}"
         curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
                         -d chat_id=$chat_id \
                         -d "disable_web_page_preview=true" \
@@ -55,7 +54,7 @@ function finerr() {
 # Compile plox
 function compile() {
         make O=out ARCH=arm64 vince-krypton_defconfig
-        PATH="/root/clang/bin:${PATH}" \
+        PATH="/root/tools/clang/bin:${PATH}" \
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
