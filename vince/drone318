@@ -1,24 +1,14 @@
 #!/usr/bin/env bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-echo "Clone Toolchains"
-git clone -j32 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r34 gcc
-git clone -j32 https://github.com/Kry9toN/AnyKernel3 -b vince AnyKernel
-
-# Install build package
-install-package --update-new ccache bc bash git-core gnupg build-essential \
-	zip curl make automake autogen autoconf autotools-dev libtool shtool python \
-	m4 gcc libtool zlib1g-dev
-
-echo "Done"
 chat_id="-1001348632957"
-GCC="$(pwd)/gcc/bin/aarch64-linux-android-"
+GCC="/root/tools/gcc/bin/aarch64-linux-android-"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 START=$(date +"%s")
 export ARCH=arm64
 export KBUILD_BUILD_USER=root
 export KBUILD_BUILD_HOST=KryPtoNProject
 export CROSS_COMPILE
-CROSS_COMPILE+="$PWD/gcc/bin/aarch64-linux-android-"
+CROSS_COMPILE+="$GCC"
 # sticker plox
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
@@ -39,7 +29,7 @@ function sendinfo() {
 }
 # Push kernel to channel
 function push() {
-        cd AnyKernel
+        cd /root/AnyKernel
 	ZIP=$(echo KryPtoN*.zip)
 	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
 			-F chat_id="$chat_id" \
@@ -72,12 +62,13 @@ function compile() {
 		        stikerr
                 exit 1
             fi
-        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
+        cp out/arch/arm64/boot/Image.gz-dtb /root/AnyKernel/zImage
         paste
 }
 # Zipping
 function zipping() {
-        cd AnyKernel
+        cd /root/AnyKernel
+        git checkout vince
         zip -r9 KryPtoN-vince-AOSP3.18-${tanggal}.zip *
         cd ..
 }
