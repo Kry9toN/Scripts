@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2020 @kry9ton (Telegram and Github)
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+read -p "Enter file ID : " ID
+read -p "Enter file name output : " FILE
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=$ID' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$ID" -O $FILE && rm -rf /tmp/cookies.txt
