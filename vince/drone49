@@ -3,7 +3,8 @@ IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 START=$(date +"%s")
-export LD_LIBRARY_PATH="/root/tools/clang/bin/../lib:$PATH"xport ARCH=arm64
+export LD_LIBRARY_PATH="/root/tools/clang/bin/../lib:$PATH"
+export ARCH=arm64
 export KBUILD_BUILD_USER=root
 export KBUILD_BUILD_HOST=KryPtoNProject
 # sticker plox
@@ -62,12 +63,12 @@ function compile() {
                       CROSS_COMPILE=aarch64-linux-gnu- \
                       CROSS_COMPILE_ARM32=arm-linux-gnueabi- | tee build.log
             if ! [ -a $IMAGE ]; then
-                paste
                 finerr
 		stikerr
                 exit 1
             fi
         cp out/arch/arm64/boot/Image.gz-dtb /root/AnyKernel/zImage
+        paste
 }
 # Zipping
 function zipping() {
