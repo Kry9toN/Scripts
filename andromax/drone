@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
-GCC="/root/tools/gcc/bin/aarch64-linux-android-"
+GCC="/root/tools/gcc/bin/arm-linux-androidkernel-"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 START=$(date +"%s")
 export ARCH=arm
