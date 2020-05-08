@@ -68,7 +68,7 @@ function compile() {
 # Zipping
 function zipping() {
         cd /root/AnyKernel
-        git checkout vince
+        git checkout haier
         zip -r9 KryPtoN-G151-${tanggal}.zip *
         cd ..
 }
