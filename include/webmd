@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 tanggalweb=$(TZ=Asia/Jakarta date "+%Y-%m-%d")
 tanggalfile=$(TZ=Asia/Jakarta date "+%Y/%m/%d")
-filesize=$(du -h $ZIP_NAME)
+filesize=$(du -h /root/AnyKernel/$ZIP_NAME)
 
 # Membuat file .md
 function md() {
