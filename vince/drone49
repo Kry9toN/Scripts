@@ -81,11 +81,11 @@ function zipping() {
 
 sendinfo
 compile
+# include webmd
+source webmd
 zipping
 END=$(date +"%s")
 DIFF=$(($END - $START))
 paste
-# include webmd
-source webmd
 push
 sticker
