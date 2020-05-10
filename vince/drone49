@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-wget https://raw.githubusercontent.com/Kry9toN/Scripts/master/include/webmd
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
@@ -81,11 +80,12 @@ function zipping() {
 
 sendinfo
 compile
-# include webmd
-source webmd
 zipping
 END=$(date +"%s")
 DIFF=$(($END - $START))
+wget https://raw.githubusercontent.com/Kry9toN/Scripts/master/include/webmd
+# include webmd
+source webmd
 paste
 push
 sticker
