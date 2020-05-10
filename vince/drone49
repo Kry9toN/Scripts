@@ -2,6 +2,7 @@
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
+ZIP_NAME="KryPtoN-vince-AOSP4.9-${tanggal}.zip"
 START=$(date +"%s")
 export LD_LIBRARY_PATH="/root/tools/clang/bin/../lib:$PATH"
 export ARCH=arm64
@@ -29,8 +30,7 @@ function sendinfo() {
 # Push kernel to channel
 function push() {
         cd /root/AnyKernel
-	ZIP=$(echo KryPtoN*.zip)
-	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
+	curl -F document=@$ZIP_NAME "https://api.telegram.org/bot$token/sendDocument" \
 			-F chat_id="$chat_id" \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
@@ -74,7 +74,7 @@ function compile() {
 function zipping() {
         cd /root/AnyKernel
         git checkout vince
-        zip -r9 KryPtoN-vince-AOSP4.9-${tanggal}.zip *
+        zip -r9 $ZIP_NAME *
         cd ..
 }
 sendinfo
