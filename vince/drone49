@@ -82,7 +82,6 @@ function zipping() {
 # include webmd
 source webmd
 
-
 sendinfo
 compile
 md
