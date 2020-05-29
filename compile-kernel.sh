@@ -17,7 +17,7 @@ CONFIG=vince-krypton_defconfig
 CORES=$(grep -c ^processor /proc/cpuinfo)
 THREAD="-j$CORES"
 CROSS_COMPILE+="ccache "
-CROSS_COMPILE+="$PWD/stock/bin/aarch64-linux-gnu-"
+CROSS_COMPILE+="~/toolchain/bin/aarch64-linux-gnu-"
 
 # Export
 export ARCH=arm64
