@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Copyright 2020 Kry9toN @(Telegram and Github)
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+# Input
+read -p "Enter your username : " USERNAME
+read -p "Enter your passwd : " PASS
+read -p "Enter expired (days) : " DAY
+
+DATE="$(date -d "$DAY days" +"%Y-%m-%d")"
+
+# Algortm user add
+sudo useradd $USERNAME -e $DATE
+echo "$USERNAME:$PASS" | sudo chpasswd
+
+# Print
+echo -e " "
+echo -e "===== Account detail ====="
+echo -e " "
+echo -e "Username : $USERNAME"
+echo -e "Password : $PASS"
+echo -e "Expired : $DATE"
+echo -e " "
