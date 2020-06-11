@@ -164,7 +164,7 @@ timeStart
 BUILDLOG="$CDIR/out/${ROM_NAME}-${DEVICE}-${DATELOG}.log"
 # time to build bro
 source build/envsetup.sh
-lunch "$lunch_command"_"$device_codename"-"$build_type"
+lunch komodo_"$device_codename"-"$build_type"
 startTele
 mkfifo reading
 tee "${BUILDLOG}" < reading &
