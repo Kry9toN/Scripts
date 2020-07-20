@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
-tanggalweb=$(TZ=Asia/Jakarta date "+%Y-%m-%d")
+mdname="KryPtoN-vince-${tanggal}.md"
 tanggalfile=$(TZ=Asia/Jakarta date "+%Y/%m/%d")
 filesize=$(du -h /root/AnyKernel/$ZIP_NAME)
+checksum="md5sum $ZIP_NAME"
 
 # Membuat file .md
 function md() {
-     echo "---" > ${tanggalweb}.md
-     echo "name: $ZIP_NAME" >> ${tanggalweb}.md
-     echo "date: $tanggalfile" >> ${tanggalweb}.md
-     echo "size: $filesize" >> ${tanggalweb}.md
-     echo "version: " >> ${tanggalweb}.md
-     echo "changelog: " >> ${tanggalweb}.md
-     echo "link: " >> ${tanggalweb}.md
-     echo "---" >> ${tanggalweb}.md
+     echo "---" > ${mdname}
+     echo "name: $ZIP_NAME" >> ${mdname}
+     echo "date: $tanggalfile" >> ${mdname}
+     echo "size: $filesize" >> ${mdname}
+     echo "version: " >> ${mdname}
+     echo "md5: $checksum" >> ${mdname}
+     echo "changelog: " >> ${mdname}
+     echo "categories: " >> ${mdname}
+     echo "layout: waitting" >> ${mdname}
+     echo "link: " >> ${mdname}
+     echo "---" >> ${mdname}
 }
 
 # Kirim File .md
