@@ -21,7 +21,7 @@ function md() {
 
 # Kirim File .md
 function sendmd() {
-	curl -F document=@${tanggalweb}.md "https://api.telegram.org/bot$token/sendDocument" \
+	curl -F document=@${mdname} "https://api.telegram.org/bot$token/sendDocument" \
 			-F chat_id="$chat_id" \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html"
