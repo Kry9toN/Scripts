@@ -50,7 +50,6 @@ OUT="${CDIR}/out/target/product/$device_codename"
 ROM_NAME="KomodoOS"
 DEVICE="$device_codename"
 BRANCH_MANIFEST="ten"
-OTA="${OUT}/KomodoOS-*.json"
 KOMODOFILE="/home/jenkins/file"
 # my Time
 export TZ=":Asia/Jakarta"
@@ -71,35 +70,35 @@ fi
 # CCACHE UMMM!!! Cooks my builds fast
 
 if [ "$use_ccache" = "yes" ]; then
-	echo -e ${blu}"CCACHE is enabled for this build"${txtrst}
-	export CCACHE_EXEC=$(which ccache)
-	export USE_CCACHE=1
-	export CCACHE_DIR=$path_ccache
-	ccache -M 50G
+        echo -e ${blu}"CCACHE is enabled for this build"${txtrst}
+        export CCACHE_EXEC=$(which ccache)
+        export USE_CCACHE=1
+        export CCACHE_DIR=$path_ccache
+        ccache -M 50G
 fi
 
 if [ "$use_ccache" = "clean" ]; then
-	export CCACHE_EXEC=$(which ccache)
-	export CCACHE_DIR=$path_ccache
-	ccache -C
-	export USE_CCACHE=1
-	ccache -M 50G
-	wait
-	echo -e ${grn}"CCACHE Cleared"${txtrst};
+        export CCACHE_EXEC=$(which ccache)
+        export CCACHE_DIR=$path_ccache
+        ccache -C
+        export USE_CCACHE=1
+        ccache -M 50G
+        wait
+        echo -e ${grn}"CCACHE Cleared"${txtrst};
 fi
 
 # Its Clean Time
 if [ "$make_clean" = "yes" ]; then
-	make clean # && make clobber
-	wait
-	echo -e ${cya}"OUT dir from your repo deleted"${txtrst};
+        make clean # && make clobber
+        wait
+        echo -e ${cya}"OUT dir from your repo deleted"${txtrst};
 fi
 
 # Its Images Clean Time
 if [ "$make_clean" = "installclean" ]; then
-	make installclean
-	wait
-	echo -e ${cya}"Images deleted from OUT dir"${txtrst};
+        make installclean
+        wait
+        echo -e ${cya}"Images deleted from OUT dir"${txtrst};
 fi
 
 # Telegram Function
@@ -107,43 +106,43 @@ BOT_API_KEY="881627492:AAEBh0pW7sbmGOdRhvHVWTPX8ozqTUEHuHw"
 CHAT_ID=-1001444624319
 
 function sendInfo() {
-	curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d chat_id=$CHAT_ID -d "parse_mode=HTML" -d text="$(
-		for POST in "${@}"; do
-			echo "${POST}"
-		done
-	)" &> /dev/null
+        curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d chat_id=$CHAT_ID -d "parse_mode=HTML" -d text="$(
+                for POST in "${@}"; do
+                        echo "${POST}"
+                done
+        )" &> /dev/null
 }
 
 function sendLog() {
-	curl -F chat_id=$CHAT_ID -F document=@"$1" https://api.telegram.org/bot$BOT_API_KEY/sendDocument &>/dev/null
+        curl -F chat_id=$CHAT_ID -F document=@"$1" https://api.telegram.org/bot$BOT_API_KEY/sendDocument &>/dev/null
 }
 
 function sendTele() {
-	curl -F chat_id=$CHAT_ID -F document=@"$1" https://api.telegram.org/bot$BOT_API_KEY/sendDocument &>/dev/null
+        curl -F chat_id=$CHAT_ID -F document=@"$1" https://api.telegram.org/bot$BOT_API_KEY/sendDocument &>/dev/null
 }
 
 #####
 
 function timeStart() {
-	DATELOG=$(date "+%H%M-%d%m%Y")
-	BUILD_START=$(date +"%s")
-	DATE=`date`
+        DATELOG=$(date "+%H%M-%d%m%Y")
+        BUILD_START=$(date +"%s")
+        DATE=`date`
 }
 
 function timeEnd() {
-	BUILD_END=$(date +"%s")
-	DIFF=$(($BUILD_END - $BUILD_START))
+        BUILD_END=$(date +"%s")
+        DIFF=$(($BUILD_END - $BUILD_START))
 }
 
 # Build ROM
 function startTele() {
-	sendInfo "<b>====== Starting Build ROM ======</b>" \
-		"<b>ROM Name:</b> <code>${ROM_NAME}</code>" \
-		"<b>Branch:</b> <code>${BRANCH_MANIFEST}</code>" \
-		"<b>Device:</b> <code>${DEVICE}</code>" \
-		"<b>Command:</b> <code>$target_command</code>" \
-		"<b>Upload to SF:</b> <code>$upload_to_sf</code>" \
-		"<b>Started at</b> <code>$DATE</code>"
+        sendInfo "<b>====== Starting Build ROM ======</b>" \
+                "<b>ROM Name:</b> <code>${ROM_NAME}</code>" \
+                "<b>Branch:</b> <code>${BRANCH_MANIFEST}</code>" \
+                "<b>Device:</b> <code>${DEVICE}</code>" \
+                "<b>Command:</b> <code>$target_command</code>" \
+                "<b>Upload to SF:</b> <code>$upload_to_sf</code>" \
+                "<b>Started at</b> <code>$DATE</code>"
 }
 
 function statusBuild() {
@@ -156,6 +155,7 @@ function statusBuild() {
         sendLog "$LOGTRIM"
         exit $retVal
     fi
+    OTA=$(find $OUT -name "$ROM_NAME-*json")
     sendTele "$OTA"
     sendInfo "Build Success. Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
 }
@@ -191,12 +191,22 @@ fi
 
 if [ "$upload_to_sf" = "release" ]; then
     mv "$FILEPATH" $KOMODOFILE/komodo-release/$DEVICE/
-    sshpass -p 'passwd' scp "$FILEPATH" komodos@frs.sourceforge.net:/home/frs/project/komodos-rom/$DEVICE/
+    sshpass -p '' sftp -oBatchMode=no komodos@frs.sourceforge.net:/home/frs/project/komodos-rom > /dev/null 2>&1 <<EOF
+cd $DEVICE
+put $FILEPATH
+exit
+EOF
+    sendInfo "Link : https://sourceforge.net/projects/komodos-rom/files/$DEVICE/$FILENAME/download"
 fi
 
 if [ "$upload_to_sf" = "test" ]; then
     mv "$FILEPATH" $KOMODOFILE/komodo-beta/$DEVICE/
-    sshpass -p 'passwd' scp "$FILEPATH" kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project/Test/
+    sshpass -p '' sftp -oBatchMode=no kry9ton@frs.sourceforge.net:/home/frs/project/krypton-project > /dev/null 2>&1 <<EOF
+cd Test
+put $FILEPATH
+exit
+EOF
+    sendInfo "Link : https://sourceforge.net/projects/krypton-project/files/Test/$FILENAME/download"
 fi
 
 exit 0
