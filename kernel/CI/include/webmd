@@ -2,7 +2,6 @@
 mdname="KryPtoN-vince-${tanggal}.md"
 tanggalfile=$(TZ=Asia/Jakarta date "+%Y/%m/%d")
 filesize=$(du -h /root/AnyKernel/$ZIP_NAME)
-checksum="md5sum $ZIP_NAME"
 
 # Membuat file .md
 function md() {
@@ -11,7 +10,7 @@ function md() {
      echo "date: $tanggalfile" >> ${mdname}
      echo "size: $filesize" >> ${mdname}
      echo "version: " >> ${mdname}
-     echo "md5: $checksum" >> ${mdname}
+     echo "md5: $(md5sum $ZIP_NAME)" >> ${mdname}
      echo "changelog: " >> ${mdname}
      echo "categories: " >> ${mdname}
      echo "layout: waitting" >> ${mdname}
