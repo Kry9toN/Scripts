@@ -50,8 +50,9 @@ sleep 1s
 
 echo "***** Install jenkins *****"
 echo "Install Open JDK, Jenkins and Apache"
-wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add -
-sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian binary/ > \
+    /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
 sudo apt install jenkins apache2 -y
 # a2enmod
