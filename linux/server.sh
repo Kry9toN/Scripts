@@ -54,6 +54,11 @@ wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add
 sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
 sudo apt install jenkins apache2 -y
+# a2enmod
+echo "Enable modul apache and restart service apache"
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2ensite jenkins
 sleep 1s
 
 # then start both apache and jenkins
@@ -68,11 +73,6 @@ sudo wget https://raw.githubusercontent.com/Komodo-OS-Rom/Server_Utilites/master
 sudo chmod 644 /etc/apache2/sites-available/jenkins.conf
 sleep 1s
 
-# a2enmod
-echo "Enable modul apache and restart service apache and jenkins"
-sudo a2enmod proxy
-sudo a2enmod proxy_http
-sudo a2ensite jenkins
 sudo systemctl restart apache2
 sudo systemctl restart jenkins
 sleep 1s
