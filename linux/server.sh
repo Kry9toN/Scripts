@@ -100,7 +100,7 @@ sleep 1s
 while true; do
     read -p "Have you recorded A this server's public IP ? : " yn
     case $yn in
-        [Yy]* ) sudo certbot --apache; break;
+        [Yy]* ) sudo certbot --apache; break;;
         [Nn]* ) echo "Please first record the this public ip server!";;
         * ) echo "Please answer y or n.";;
     esac
