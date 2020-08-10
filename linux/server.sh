@@ -50,10 +50,16 @@ sleep 1s
 
 echo "***** Install jenkins *****"
 echo "Install Open JDK, Jenkins and Apache"
-wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add -
-sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian binary/ > \
+    /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
 sudo apt install jenkins apache2 -y
+# a2enmod
+echo "Enable modul apache and restart service apache"
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2ensite jenkins
 sleep 1s
 
 # then start both apache and jenkins
@@ -68,11 +74,6 @@ sudo wget https://raw.githubusercontent.com/Komodo-OS-Rom/Server_Utilites/master
 sudo chmod 644 /etc/apache2/sites-available/jenkins.conf
 sleep 1s
 
-# a2enmod
-echo "Enable modul apache and restart service apache and jenkins"
-sudo a2enmod proxy
-sudo a2enmod proxy_http
-sudo a2ensite jenkins
 sudo systemctl restart apache2
 sudo systemctl restart jenkins
 sleep 1s
@@ -106,7 +107,7 @@ sleep 1s
 while true; do
     read -p "Have you recorded A this server's public IP ? : " yn
     case $yn in
-        [Yy]* ) sudo certbot --apache; break;
+        [Yy]* ) sudo certbot --apache; break;;
         [Nn]* ) echo "Please first record the this public ip server!";;
         * ) echo "Please answer y or n.";;
     esac
