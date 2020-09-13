@@ -2,7 +2,8 @@
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
-ZIP_NAME="KryPtoN-vince-AOSP4.9-${tanggal}.zip"
+device="vince"
+ZIP_NAME="KryPtoN-${device}-AOSP4.9-${tanggal}.zip"
 START=$(date +"%s")
 export LD_LIBRARY_PATH="/root/tools/clang/bin/../lib:$PATH"
 export ARCH=arm64
@@ -25,7 +26,7 @@ function sendinfo() {
                         -d chat_id=$chat_id \
                         -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
-                        -d text="<b>KryPtoN Kernel 4.9</b> new build is up%0AStarted on <code>DroneCI</code>%0AFor device <b>Vince</b> (Redmi 5 Plus)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (A9/A10)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(clang --version | head -n 1 | perl -pe 's/\(https.*?\)//gs' | sed -e 's/  */ /g')</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>DroneCI Status</b> <a href='https://cloud.drone.io/Kry9toN'>here</a>"
+                        -d text="<b>KryPtoN Kernel 4.9</b> new build is up%0AStarted on <code>DroneCI</code>%0AFor device <b>${device}</b> (Redmi 5 Plus)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (A9/A10)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(clang --version | head -n 1 | perl -pe 's/\(https.*?\)//gs' | sed -e 's/  */ /g')</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>DroneCI Status</b> <a href='https://cloud.drone.io/Kry9toN'>here</a>"
 }
 # Push kernel to channel
 function push() {
@@ -54,7 +55,7 @@ function finerr() {
 }
 # Compile plox
 function compile() {
-        make O=out ARCH=arm64 vince-krypton_defconfig
+        make O=out ARCH=arm64 ${device}-krypton_defconfig
         PATH="/root/tools/clang/bin:${PATH}" \
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
@@ -73,7 +74,7 @@ function compile() {
 # Zipping
 function zipping() {
         cd /root/AnyKernel
-        git checkout vince
+        git checkout ${device}
         zip -r9 $ZIP_NAME *
         cd ..
 }
