@@ -3,12 +3,12 @@ IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="joyeuse"
-ZIP_NAME="KryPtoN-${device}-AOSP-${tanggal}.zip"
+ZIP_NAME="ProjectThanksYou-BLC-${device}-AOSP-${tanggal}.zip"
 START=$(date +"%s")
 export LD_LIBRARY_PATH="/root/tools/clang/bin/../lib:$PATH"
 export ARCH=arm64
-export KBUILD_BUILD_USER=ci
-export KBUILD_BUILD_HOST=KryPtoNKernel
+export KBUILD_BUILD_USER=itsmeley
+export KBUILD_BUILD_HOST=kypton
 # sticker plox
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
@@ -60,9 +60,12 @@ function compile() {
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
-                      CLANG_TRIPLE=aarch64-linux-gnu- \
-                      CROSS_COMPILE=aarch64-linux-gnu- \
-                      CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1 | tee build.log
+                      AR=llvm-ar \
+		      NM=llvm-nm \
+		      OBJCOPY=llvm-objcopy \
+		      OBJDUMP=llvm-objdump \
+		      STRIP=llvm-strip \
+                      CROSS_COMPILE=aarch64-linux-gnu- 2>&1 | tee build.log
             if ! [ -a $IMAGE ]; then
                 finerr
 		stikerr
