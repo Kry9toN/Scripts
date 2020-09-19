@@ -7,7 +7,7 @@ ZIP_NAME="ProjectThanksYou-BLC-${device}-AOSP-${tanggal}.zip"
 START=$(date +"%s")
 export PATH="/root/tools/clang/bin:${PATH}"
 export ARCH=arm64
-export KBUILD_BUILD_USER=ci
+export KBUILD_BUILD_USER=Zoel
 export KBUILD_BUILD_HOST=KryPtoNKernel
 # sticker plox
 function sticker() {
