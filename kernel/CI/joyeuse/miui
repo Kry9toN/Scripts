@@ -55,7 +55,7 @@ function finerr() {
 }
 # Compile plox
 function compile() {
-        make O=out ARCH=arm64 krypton-${device}_defconfig
+        make O=out ARCH=arm64 ${device}-perf_defconfig
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
