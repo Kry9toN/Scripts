@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+chat_id="-1001348632957"
+tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
+device="joyeuse"
+ZIP_NAME="ProjectThanksYou-BLC-${device}-MIUI-${tanggal}.zip"
+START=$(date +"%s")
+export PATH="/root/tools/clang/bin:${PATH}"
+export ARCH=arm64
+export KBUILD_BUILD_USER=Zoel
+export KBUILD_BUILD_HOST=KryPtoNKernel
+# sticker plox
+function sticker() {
+        curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
+                        -d sticker="CAADBQADBgADZMYlHVmIXcRlbUt_Ag" \
+                        -d chat_id=$chat_id
+}
+# Stiker Error
+function stikerr() {
+	curl -s -F chat_id=$chat_id -F sticker="CAADBQADzwIAAnBaORAiq8ke6PAt0wI" https://api.telegram.org/bot$token/sendSticker
+}
+# Send info plox channel
+function sendinfo() {
+        PATH="/root/tools/clang/bin:${PATH}"
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+                        -d chat_id=$chat_id \
+                        -d "disable_web_page_preview=true" \
+                        -d "parse_mode=html" \
+                        -d text="<b>KryPtoN Kernel 4.14</b> new build is up%0AStarted on <code>DroneCI</code>%0AFor device <b>${device}</b> (Redmi Note 9 Pro)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code>%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(clang --version | head -n 1 | perl -pe 's/\(https.*?\)//gs' | sed -e 's/  */ /g')</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>DroneCI Status</b> <a href='https://cloud.drone.io/Kry9toN'>here</a>"
+}
+# Push kernel to channel
+function push() {
+        cd /root/AnyKernel
+	curl -F document=@$ZIP_NAME "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" \
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s)."
+}
+# Function upload logs to my own TELEGRAM paste
+function paste() {
+        cat build.log | curl -F document=@build.log "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" 
+}
+# Fin Error
+function finerr() {
+        paste
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+			-d chat_id="$chat_id" \
+			-d "disable_web_page_preview=true" \
+			-d "parse_mode=markdown" \
+			-d text="Job ${SEMAPHORE_JOB_NAME} throw an error(s)"
+}
+# Compile plox
+function compile() {
+        make O=out ARCH=arm64 krypton-${device}_defconfig
+        make -j$(nproc --all) O=out \
+                      ARCH=arm64 \
+                      CC=clang \
+                      AR=llvm-ar \
+                      NM=llvm-nm \
+                      OBJDUMP=llvm-objdump \
+                      STRIP=llvm-strip \
+                      OBJCOPY=llvm-objcopy \
+                      OBJSIZE=llvm-size \
+                      READELF=llvm-readelf \
+                      CROSS_COMPILE=aarch64-linux-gnu- \
+                      CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1 | tee build.log
+            if ! [ -a $IMAGE ]; then
+                finerr
+		stikerr
+                exit 1
+            fi
+        cp out/arch/arm64/boot/Image.gz-dtb /root/AnyKernel/zImage
+        paste
+}
+
+# For MIUI Build
+# Credit @adekmaulana
+OUTDIR="$PWD/out/"
+SRCDIR="$PWD/"
+MODULEDIR="/root/AnyKernel/modules/system/lib/modules/"
+PRONTO=${MODULEDIR}pronto/pronto_wlan.ko
+STRIP="$PWD/gcc/bin/$(echo "$(find "$PWD/gcc/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
+sed -e 's/gcc/strip/')"
+
+for MOD in $(find "${OUTDIR}" -name '*.ko') ; do
+	"${STRIP}" --strip-unneeded --strip-debug "${MOD}" &> /dev/null
+	"${SRCDIR}"/scripts/sign-file sha512 \
+			"${OUTDIR}/signing_key.priv" \
+			"${OUTDIR}/signing_key.x509" \
+			"${MOD}"
+	find "${OUTDIR}" -name '*.ko' -exec cp {} "${MODULEDIR}" \;
+	case ${MOD} in
+		*/wlan.ko)
+		cp -ar "${MOD}" "${PRONTO}"
+	esac
+done
+
+# Zipping
+function zipping() {
+        cd /root/AnyKernel
+        git checkout ${device}
+        zip -r9 $ZIP_NAME *
+        cd ..
+}
+
+sendinfo
+compile
+zipping
+END=$(date +"%s")
+DIFF=$(($END - $START))
+wget https://raw.githubusercontent.com/Kry9toN/Scripts/master/kernel/CI/include/webmd
+# include webmd
+source webmd
+paste
+push
+sticker
