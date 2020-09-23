@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-mdname="KryPtoN-${device}-${tanggal}.md"
+mdname="${ZIP_NAME}.md"
 tanggalfile=$(TZ=Asia/Jakarta date "+%Y/%m/%d")
 filesize=$(du -h /root/AnyKernel/$ZIP_NAME)
 mdsum=$(md5sum /root/AnyKernel/$ZIP_NAME)
