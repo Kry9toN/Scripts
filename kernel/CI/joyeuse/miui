@@ -102,7 +102,7 @@ done
 # Zipping
 function zipping() {
         cd /root/AnyKernel
-        git checkout ${device}
+        git checkout ${device}-miui
         zip -r9 $ZIP_NAME *
         cd ..
 }
