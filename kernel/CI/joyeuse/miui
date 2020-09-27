@@ -5,7 +5,7 @@ tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="joyeuse"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-MIUI-${tanggal}.zip"
 START=$(date +"%s")
-export PATH="/root/tools/clang/bin:${PATH}"
+export PATH="/root/tools/proton/bin:${PATH}"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Zoel
 export KBUILD_BUILD_HOST=KryPtoNKernel
@@ -21,7 +21,6 @@ function stikerr() {
 }
 # Send info plox channel
 function sendinfo() {
-        PATH="/root/tools/clang/bin:${PATH}"
         curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
                         -d chat_id=$chat_id \
                         -d "disable_web_page_preview=true" \
