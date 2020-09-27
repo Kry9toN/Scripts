@@ -70,11 +70,11 @@ function compile() {
 
 # For MIUI Build
 # Credit @adekmaulana
-OUTDIR="$PWD/out/"
-SRCDIR="$PWD/"
+OUTDIR="$(pwd)/out/"
+SRCDIR="$(pwd)/"
 MODULEDIR="/root/AnyKernel/modules/system/lib/modules/"
 PRONTO=${MODULEDIR}pronto/pronto_wlan.ko
-STRIP="$PWD/gcc/bin/$(echo "$(find "$PWD/gcc/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
+STRIP="$(pwd)/gcc/bin/$(echo "$(find "$(pwd)/gcc/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
 sed -e 's/gcc/strip/')"
 
 for MOD in $(find "${OUTDIR}" -name '*.ko') ; do
