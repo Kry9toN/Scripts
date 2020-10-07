@@ -8,7 +8,7 @@ START=$(date +"%s")
 export PATH="/root/tools/clang/bin:${PATH}"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Zoel
-export KBUILD_BUILD_HOST=KryPtoNKernel
+export KBUILD_BUILD_HOST=NusantaraDevs
 # sticker plox
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
