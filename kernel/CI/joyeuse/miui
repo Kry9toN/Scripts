@@ -73,7 +73,7 @@ function compile() {
 OUTDIR="$(pwd)/out/"
 SRCDIR="$(pwd)/"
 MODULEDIR="/root/AnyKernel/modules/system/lib/modules/"
-PRONTO=${MODULEDIR}pronto/pronto_wlan.ko
+QCACLD=${MODULEDIR}qca-cld3/qca-cld3_wlan.ko
 STRIP="/root/tools/gcc/bin/$(echo "$(find "/root/tools/gcc/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
 sed -e 's/gcc/strip/')"
 
@@ -86,7 +86,7 @@ for MOD in $(find "${OUTDIR}" -name '*.ko') ; do
 	find "${OUTDIR}" -name '*.ko' -exec cp {} "${MODULEDIR}" \;
 	case ${MOD} in
 		*/wlan.ko)
-		cp -ar "${MOD}" "${PRONTO}"
+		cp -ar "${MOD}" "${QCALCD}"
 	esac
 done
 
