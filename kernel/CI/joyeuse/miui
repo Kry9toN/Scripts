@@ -5,6 +5,7 @@ tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="joyeuse"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-MIUI-${tanggal}.zip"
 START=$(date +"%s")
+KERNEL_DIR=$(pwd)
 export PATH="/root/tools/proton/bin:${PATH}"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Zoel
@@ -68,31 +69,29 @@ function compile() {
         paste
 }
 
-# For MIUI Build
-# Credit @adekmaulana
-OUTDIR="$(pwd)/out/"
-SRCDIR="$(pwd)/"
-MODULEDIR="/root/AnyKernel/modules/system/lib/modules/"
-QCACLD=${MODULEDIR}qca-cld3/qca-cld3_wlan.ko
-STRIP="/root/tools/gcc/bin/$(echo "$(find "/root/tools/gcc/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
-sed -e 's/gcc/strip/')"
-
-for MOD in $(find "${OUTDIR}" -name '*.ko') ; do
-	"${STRIP}" --strip-unneeded --strip-debug "${MOD}" &> /dev/null
-	"${SRCDIR}"/scripts/sign-file sha512 \
-			"${OUTDIR}/signing_key.priv" \
-			"${OUTDIR}/signing_key.x509" \
-			"${MOD}"
-	find "${OUTDIR}" -name '*.ko' -exec cp {} "${MODULEDIR}" \;
-	case ${MOD} in
-		*/wlan.ko)
-		cp -ar "${MOD}" "${QCALCD}"
-	esac
-done
+# ENV
+ZIP_DIR=/root/AnyKernel
+VENDOR_MODULEDIR="$ZIP_DIR/modules/vendor/lib/modules"
+STRIP="aarch64-linux-gnu-strip"
+function wlan_module() {
+    # credit @adekmaulana
+    for MODULES in $(find "$KERNEL_DIR/out" -name '*.ko'); do
+        "${STRIP}" --strip-unneeded --strip-debug "${MODULES}"
+        "$KERNEL_DIR/out/scripts/sign-file" sha512 \
+                "$KERNEL_DIR/out/certs/signing_key.pem" \
+                "$KERNEL_DIR/out/certs/signing_key.x509" \
+                "${MODULES}"
+        case ${MODULES} in
+                */wlan.ko)
+            cp "${MODULES}" "${VENDOR_MODULEDIR}/qca_cld3_wlan.ko" ;;
+        esac
+    done
+    echo -e "(i) Done moving wifi modules"
+}
 
 # Zipping
 function zipping() {
-        cd /root/AnyKernel
+        cd $ZIP_DIR
         git checkout ${device}-miui
         zip -r9 $ZIP_NAME *
         cd ..
@@ -100,6 +99,7 @@ function zipping() {
 
 sendinfo
 compile
+wlan_module
 zipping
 END=$(date +"%s")
 DIFF=$(($END - $START))
