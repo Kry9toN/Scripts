@@ -90,6 +90,5 @@ DIFF=$(($END - $START))
 wget https://raw.githubusercontent.com/Kry9toN/Scripts/master/kernel/CI/include/webmd
 # include webmd
 source webmd
-paste
 push
 sticker
