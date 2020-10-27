@@ -79,8 +79,15 @@ function module() {
         cd ..
         git clone https://github.com/zexceed12300/rtl8188eus
         cd rtl8188eus
+        export CROSS_COMPILE=/root/tools/gcc/bin/aarch64-linux-android-
         export KLIB_BUILD=../out
         make
+        MODULE=$(pwd)/out/*.ko
+        if ! [ -a $MODULE ]; then
+             finerr
+             stikerr
+             exit 1
+        fi
         cp out/*.ko /root/AnyKernel
 }
 # Zipping
