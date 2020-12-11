@@ -1,5 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="joyeuse"
@@ -8,7 +9,7 @@ START=$(date +"%s")
 export PATH="/root/tools/clang/bin:${PATH}"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Zoel
-export KBUILD_BUILD_HOST=NusantaraDevs
+export KBUILD_BUILD_HOST=Thanksyou
 # sticker plox
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
@@ -58,20 +59,14 @@ function compile() {
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
-                      AR=llvm-ar \
-                      NM=llvm-nm \
-                      OBJDUMP=llvm-objdump \
-                      STRIP=llvm-strip \
-                      OBJCOPY=llvm-objcopy \
-                      OBJSIZE=llvm-size \
-                      READELF=llvm-readelf \
                       CROSS_COMPILE=aarch64-linux-gnu- 2>&1 | tee build.log
             if ! [ -a $IMAGE ]; then
                 finerr
 		stikerr
                 exit 1
             fi
-        cp out/arch/arm64/boot/Image.gz-dtb /root/AnyKernel/zImage
+        cp $IMAGE /root/AnyKernel/
+        cp $DTBO /root/AnyKernel/
         paste
 }
 # Zipping
