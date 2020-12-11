@@ -6,6 +6,7 @@ tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="joyeuse"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-AOSP-${tanggal}.zip"
 START=$(date +"%s")
+
 export PATH="/root/tools/clang/bin:${PATH}"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Zoel
@@ -59,6 +60,7 @@ function compile() {
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
+		      LD=ld.lld \
 		      AR=llvm-ar \
 		      NM=llvm-nm \
 		      OBJDUMP=llvm-objdump \
