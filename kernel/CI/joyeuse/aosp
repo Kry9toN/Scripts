@@ -1,12 +1,10 @@
 #!/bin/bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="joyeuse"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-AOSP-${tanggal}.zip"
 START=$(date +"%s")
-
 export PATH="/root/tools/clang/bin:${PATH}"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Zoel
@@ -68,14 +66,14 @@ function compile() {
 		      OBJCOPY=llvm-objcopy \
 		      OBJSIZE=llvm-size \
 		      READELF=llvm-readelf \
-                      CROSS_COMPILE=aarch64-linux-gnu- 2>&1 | tee build.log
+                      CROSS_COMPILE=aarch64-linux-gnu- \
+		      CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1 | tee build.log
             if ! [ -a $IMAGE ]; then
                 finerr
 		stikerr
                 exit 1
             fi
         cp $IMAGE /root/AnyKernel/
-        cp $DTBO /root/AnyKernel/
         paste
 }
 # Zipping
