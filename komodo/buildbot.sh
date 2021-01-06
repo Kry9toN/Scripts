@@ -51,7 +51,6 @@ OUT="${CDIR}/out/target/product/miatoll"
 ROM_NAME="komodo"
 DEVICE="miatoll"
 BUILD_TYPE="eng"
-KOMODOFILE="/home/jenkins/file"
 
 server=$(uname -u)
 
@@ -193,9 +192,6 @@ fi
 if [ "$CHAT_ID" = "" ]; then
   echo -e ${cya}"Env CHAT_ID not set, please setup first"${txtrst}
   exit 4
-fi
-if [ "$CHAT_ID_SECOND" = "" ]; then
-  echo -e ${cya}"CHAT_ID_SECOND not set, please setup first"${txtrst}
 fi
 
 #########
