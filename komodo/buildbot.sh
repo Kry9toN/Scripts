@@ -48,9 +48,16 @@ path_ccache="$(pwd)/.ccache"
 
 CDIR=$PWD
 OUT="${CDIR}/out/target/product/miatoll"
+
+# Env Editable
 ROM_NAME="komodo"
 DEVICE="miatoll"
 BUILD_TYPE="eng"
+
+# Secret env
+BOT_API_KEY=""
+SF_PASS_TEST=""
+CHAT_ID=""
 
 server=$(uname -u)
 
