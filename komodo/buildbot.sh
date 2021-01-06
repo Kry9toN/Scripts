@@ -59,7 +59,7 @@ BOT_API_KEY=""
 SF_PASS_TEST=""
 CHAT_ID=""
 
-server=$(uname -u)
+server=$(uname -a)
 
 # my Time
 export TZ=":Asia/Jakarta"
@@ -315,8 +315,8 @@ BUILDLOG="$CDIR/out/${ROM_NAME}-miatoll-${DATELOG}.log"
 # time to build bro
 build_message "Staring broo...🔥"
 source build/envsetup.sh
-build_message "lunch "$ROM_NAME"_"$DEVICE"-"BUILD_TYPE""
-lunch "$ROM_NAME"_"$DEVICE"-"BUILD_TYPE""
+build_message "lunch "$ROM_NAME"_"$DEVICE"-"$BUILD_TYPE""
+lunch ""$ROM_NAME"_"$DEVICE"-"$BUILD_TYPE""
 mkfifo reading
 tee "${BUILDLOG}" < reading &
 build_message "masak masak"
