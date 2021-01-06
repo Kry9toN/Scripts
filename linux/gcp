@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Prepare
+sudo apt update && sudo apt install ccache git nano -y
+
 # Format and setup 
 echo "***** Prepare Persistant Disk path:/mnt/build *****  "
 sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb
