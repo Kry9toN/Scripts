@@ -155,9 +155,9 @@ tg_send_document() {
 #####
 
 # Progress
-progress(){
+progress() {
  
-    echo "BOTLOG: Build tracker process is running..."
+    echo "${cya}BOTLOG: Build tracker process is running...${txtrst}"
     sleep 10;
 
     while [ 1 ]; do
@@ -173,13 +173,13 @@ progress(){
         if [ "${NUMBER}" != "" ]; then
             if [ "${NUMBER}" -le  "99" ]; then
                 if [ "${NUMBER}" != "${NUMBER_OLD}" ] && [ "$NUMBER" != "" ] && ! cat $BUILDLOG | tail  -n 1 | grep "glob" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "including" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "soong" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "finishing" > /dev/null; then
-                echo -e "BOTLOG: Percentage changed to ${NUMBER}%"
+                echo -e "${cya}BOTLOG: Percentage changed to ${NUMBER}%${txtrst}"
                     build_message "🛠️ Building... ${NUMBER}%" > /dev/null
                 fi
             NUMBER_OLD=${NUMBER}
             fi
             if [ "$NUMBER" -eq "99" ] && [ "$NUMBER" != "" ] && ! cat $BUILDLOG | tail  -n 1 | grep "glob" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "including" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "soong" > /dev/null && ! cat $BUILDLOG | tail -n 1 | grep "finishing" > /dev/null; then
-                echo "BOTLOG: Build tracker process ended"
+                echo "${cya}BOTLOG: Build tracker process ended${txtrst}"
                 break
             fi
         fi
