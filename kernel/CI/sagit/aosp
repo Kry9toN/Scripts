@@ -58,7 +58,8 @@ function compile() {
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
-                      CROSS_COMPILE=aarch64-linux-gnu- 2>&1 | tee build.log
+                      CROSS_COMPILE=aarch64-linux-gnu- \
+		      CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1 | tee build.log
             if ! [ -a $IMAGE ]; then
                 finerr
 		stikerr
