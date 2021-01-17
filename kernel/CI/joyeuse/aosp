@@ -79,7 +79,7 @@ function compile() {
 # Zipping
 function zipping() {
         cd /root/AnyKernel
-        git checkout ${device}
+        git checkout joyeuse
         zip -r9 $ZIP_NAME *
         cd ..
 }
