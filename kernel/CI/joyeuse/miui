@@ -71,7 +71,7 @@ function compile() {
 
 # ENV
 ZIP_DIR=/root/AnyKernel
-VENDOR_MODULEDIR="$ZIP_DIR/modules/vendor/lib/modules"
+VENDOR_MODULEDIR="$ZIP_DIR/modules/system/lib/modules"
 STRIP="aarch64-linux-gnu-strip"
 function wlan_module() {
     # credit @adekmaulana
