@@ -2,7 +2,7 @@
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
-device="joyeuse"
+device="miatoll"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-AOSP-${tanggal}.zip"
 START=$(date +"%s")
 export PATH="/root/tools/clang/bin:${PATH}"
@@ -79,7 +79,7 @@ function compile() {
 # Zipping
 function zipping() {
         cd /root/AnyKernel
-        git checkout ${device}
+        git checkout joyeuse
         zip -r9 $ZIP_NAME *
         cd ..
 }
