@@ -2,7 +2,7 @@
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 chat_id="-1001348632957"
 tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
-device="joyeuse"
+device="miatoll"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-MIUI-${tanggal}.zip"
 START=$(date +"%s")
 KERNEL_DIR=$(pwd)
@@ -69,30 +69,11 @@ function compile() {
         paste
 }
 
-# ENV
-ZIP_DIR=/root/AnyKernel
-VENDOR_MODULEDIR="$ZIP_DIR/modules/system/lib/modules"
-STRIP="aarch64-linux-gnu-strip"
-function wlan_module() {
-    # credit @adekmaulana
-    for MODULES in $(find "$KERNEL_DIR/out" -name '*.ko'); do
-        "${STRIP}" --strip-unneeded --strip-debug "${MODULES}"
-        "$KERNEL_DIR/out/scripts/sign-file" sha512 \
-                "$KERNEL_DIR/out/certs/signing_key.pem" \
-                "$KERNEL_DIR/out/certs/signing_key.x509" \
-                "${MODULES}"
-        case ${MODULES} in
-                */wlan.ko)
-            cp "${MODULES}" "${VENDOR_MODULEDIR}/qca_cld3_wlan.ko" ;;
-        esac
-    done
-    echo -e "(i) Done moving wifi modules"
-}
-
 # Zipping
 function zipping() {
+ZIP_DIR=/root/AnyKernel
         cd $ZIP_DIR
-        git checkout ${device}-miui
+        git checkout joyeuse-miui
         zip -r9 $ZIP_NAME *
         cd ..
 }
