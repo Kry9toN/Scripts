@@ -9,8 +9,8 @@ ZIP_DIR=/root/AnyKernel
 KERNEL_DIR=$(pwd)
 export PATH="/root/tools/clang/bin:${PATH}"
 export ARCH=arm64
-export KBUILD_BUILD_USER=Zoel
-export KBUILD_BUILD_HOST=KryPtoNKernel
+export KBUILD_BUILD_USER=Zoelfikar
+export KBUILD_BUILD_HOST=buildbot
 # sticker plox
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
