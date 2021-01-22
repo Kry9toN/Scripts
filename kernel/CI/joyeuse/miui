@@ -5,6 +5,7 @@ tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="miatoll"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-MIUI-${tanggal}.zip"
 START=$(date +"%s")
+ZIP_DIR=/root/AnyKernel
 KERNEL_DIR=$(pwd)
 export PATH="/root/tools/clang/bin:${PATH}"
 export ARCH=arm64
@@ -59,7 +60,8 @@ function compile() {
         make -j$(nproc --all) O=out \
                       ARCH=arm64 \
                       CC=clang \
-                      CROSS_COMPILE=aarch64-linux-gnu- 2>&1 | tee build.log
+                      CROSS_COMPILE=aarch64-linux-gnu- \
+		      CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1 | tee build.log
             if ! [ -a $IMAGE ]; then
                 finerr
 		stikerr
@@ -71,7 +73,6 @@ function compile() {
 
 # Zipping
 function zipping() {
-ZIP_DIR=/root/AnyKernel
         cd $ZIP_DIR
         git checkout joyeuse-miui
         zip -r9 $ZIP_NAME *
@@ -80,7 +81,6 @@ ZIP_DIR=/root/AnyKernel
 
 sendinfo
 compile
-wlan_module
 zipping
 END=$(date +"%s")
 DIFF=$(($END - $START))
