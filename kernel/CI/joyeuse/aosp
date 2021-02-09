@@ -5,7 +5,7 @@ tanggal=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 device="miatoll"
 ZIP_NAME="ProjectThanksYou-BLC-${device}-AOSP-${tanggal}.zip"
 START=$(date +"%s")
-export PATH="/root/tools/kclang/bin:${PATH}"
+export PATH="/root/tools/proton/bin:${PATH}"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Zoel
 export KBUILD_BUILD_HOST=Thanksyou
