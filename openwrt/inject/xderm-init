@@ -1,0 +1,28 @@
+dir=/www/xderm/
+xderm=xderm-mini
+
+cd $dir
+case "$1" in
+  start)
+    echo "Xderm service is starting"
+    ./$xderm start
+    echo "Xderm service was started"
+    ;;
+  stop)
+    echo "Xderm is stopping"
+    ./$xderm stop
+    echo "Xderm Service was stopped"
+    ;;
+  restart)
+    echo "Xderm is restarting"
+    ./$xderm stop
+    ./$xderm start
+    echo "Xderm Service was restarted"
+    ;;
+  *)
+    echo "Usage: /etc/init.d/xderm {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0
