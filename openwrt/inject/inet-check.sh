@@ -1,7 +1,7 @@
 #!/bin/sh
 # Copyright (C) 2021 @kry9ton (Telegram and Github)
 # Author: Kry9toN(Dhimas) @Github
-# Date : 09 May 2021
+# Date : 26 May 2021
 
 trap ctrl_c INT
 
