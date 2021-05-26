@@ -1,5 +1,7 @@
 # Tutorial install
 
+## Untuk Xderm
+
 Download semua file yanga ada di folder ini
 
 Pindah xderm-ini ke /etc/init.d/
@@ -29,3 +31,5 @@ Lalu jalan kan script inet-check.sh
 ```
 
 Done
+
+### Selain xderm bisa di ubah di bagian inet-check.sh nya saja, di sesuaikan dengan selera
